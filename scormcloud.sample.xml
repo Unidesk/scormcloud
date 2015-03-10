@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+License key and settings file for scormcloud
+
+The license key can be of any value, though GUIDs generally work nicely since they are difficult to guess.
+
+There can be any number of license keys defined.
+-->
+
+
+<scormcloud>
+    <server>
+        <port>443</port>
+        <keystore>/home/user/scorm.jks</keystore>
+        <secret>my-little-secret</secret>
+    </server>
+    <cloud>
+        <endpoint>https://cloud.scorm.com/EngineWebServices</endpoint>
+        <appid>ABCDEFGH</appid>
+        <secret>SECRETFROMCLOUDSCORM</secret>
+    </cloud>
+    <keys>
+        <key owner="Example API user">adf9439c-b3d0-ad15-b3a7-c72f8a6f1cdf</key>
+        <key owner="Simple key example">1</key>
+    </keys>
+</scormcloud>
