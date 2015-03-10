@@ -83,7 +83,7 @@ public class ScormManager {
 		System.err.println("RESULTS: " + lid + "/" + cid);
 		
 		JSONObject json = new JSONObject();
-		JSONArray jsonClasses = new JSONArray();
+		JSONArray jsonCourses = new JSONArray();
 		
 		// init the SCORM Cloud inteface, if not already initialized
 		init();
@@ -126,8 +126,18 @@ public class ScormManager {
 				// now locate the key values from the xmldoc
 				String complete = xmldoc.getElementsByTagName("complete").item(0).getFirstChild().getTextContent();
 				String success = xmldoc.getElementsByTagName("success").item(0).getFirstChild().getTextContent();
-				String totalTime = xmldoc.getElementsByTagName("totaltime").item(0).getFirstChild().getTextContent();
-				String score = xmldoc.getElementsByTagName("score").item(0).getFirstChild().getTextContent();
+				
+				// make sure time and score are represented as numbers
+				String totalTimeStr = xmldoc.getElementsByTagName("totaltime").item(0).getFirstChild().getTextContent();
+				String scoreStr = xmldoc.getElementsByTagName("score").item(0).getFirstChild().getTextContent();
+				int totalTime = 0;
+				try {
+					totalTime = Integer.parseInt(totalTimeStr);
+				} catch (Exception e) {}
+				int score = 0;
+				try {
+					score = Integer.parseInt(scoreStr);
+				} catch (Exception e) {}
 				
 				// now add to the json array
 				SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -136,9 +146,9 @@ public class ScormManager {
 				jsonClass.put("courseTitle", courseTitle);
 				jsonClass.put("lastCourseVersionLaunched", lastCourseVersionLaunched);
 				// completedDate is "" when not yet completed, even though other dates may be filled in
-				jsonClass.put("completedDate", (completedDate == null) ? "" : dateFormatter.format(completedDate));
-				jsonClass.put("firstAccessDate", (firstAccessDate == null) ? "" : dateFormatter.format(firstAccessDate));
-				jsonClass.put("lastAccessDate", (lastAccessDate == null) ? "" : dateFormatter.format(lastAccessDate));
+				jsonClass.put("completedDate", (completedDate == null) ? "" : (dateFormatter.format(completedDate) + ".000+0000"));
+				jsonClass.put("firstAccessDate", (firstAccessDate == null) ? "" : (dateFormatter.format(firstAccessDate) + ".000+0000"));
+				jsonClass.put("lastAccessDate", (lastAccessDate == null) ? "" : (dateFormatter.format(lastAccessDate) + ".000+0000"));
 				
 				// complete is "incomplete" even when ending is completed.  not sure what complete means
 				// goes "complete" on successful test completion independent of watching everything
@@ -146,15 +156,15 @@ public class ScormManager {
 				// are in scorm and not visible in this api)
 				jsonClass.put("complete", complete);	// status can be "unknown", "incomplete", "complete"
 				jsonClass.put("success", success);	// "unknown", or "passed".  Have not yet seen "failed".  "unknown" on failed test?
-				jsonClass.put("totalTime", totalTime); // "0" or number of seconds (as a string)
-				jsonClass.put("score", score); // "unknown", or... # (100 is perfect score)
+				jsonClass.put("totalTime", totalTime); // # of seconds
+				jsonClass.put("score", score); // 0 to 100
 					
-				jsonClasses.add(jsonClass);
+				jsonCourses.add(jsonClass);
 				System.err.println("   Course: " + courseTitle + ", version=" + lastCourseVersionLaunched + ", complete=" + complete + ", success=" + success + ", totaltime=" + totalTime + ", score=" + score);
 			}
 			
 			// and formulate the success json response
-			json.put("classes", jsonClasses);
+			json.put("courses", jsonCourses);
 			WebServer.setJSONResponse(response, params, json, Response.Status.OK);
 		} catch (Exception e) {
 			System.err.println("   ERROR: exception caught: " + e.getMessage());
