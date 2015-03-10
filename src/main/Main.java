@@ -30,7 +30,7 @@ import static server.nanohttpd.NanoHTTPD.makeSSLSocketFactory;
  */
 public class Main {
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	/**
 	 * @param args the command line arguments
