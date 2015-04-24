@@ -132,11 +132,11 @@ public class ScormManager {
 				String scoreStr = xmldoc.getElementsByTagName("score").item(0).getFirstChild().getTextContent();
 				int totalTime = 0;
 				try {
-					totalTime = Integer.parseInt(totalTimeStr);
+					totalTime = new Float(Float.parseFloat(totalTimeStr)).intValue();
 				} catch (Exception e) {}
 				int score = 0;
 				try {
-					score = Integer.parseInt(scoreStr);
+					score = new Float(Float.parseFloat(scoreStr)).intValue();
 				} catch (Exception e) {}
 				
 				// now add to the json array
